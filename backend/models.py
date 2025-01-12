@@ -2,6 +2,7 @@ from backend.db import db  # Import db from backend.db
 from flask_security import UserMixin, RoleMixin
 from werkzeug.security import generate_password_hash, check_password_hash 
 import datetime as dt
+import uuid
 
 # Association table for many-to-many relationship between Users and Roles
 roles_users = db.Table(
@@ -17,25 +18,22 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255), nullable=True)
     users = db.relationship('User', secondary=roles_users, back_populates='roles')
 
-
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(128), nullable=False)
-    fs_uniquifier = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    fs_uniquifier = db.Column(db.String, unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     active = db.Column(db.Boolean, default=True)  # Add the active attribute
     roles = db.relationship('Role', secondary=roles_users, back_populates='users')
     customers = db.relationship('Customer', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     professionals = db.relationship('Professional', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-
+        return check_password_hash(self.password, password)
 
 class Customer(db.Model):
     __tablename__ = 'customer'
@@ -47,7 +45,6 @@ class Customer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     service_requests = db.relationship('ServiceRequest', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
     customer_reviews = db.relationship('CustomerReview', backref='customer', lazy='dynamic', cascade='all, delete-orphan')
-
 
 class Professional(db.Model):
     __tablename__ = 'professional'
@@ -63,7 +60,6 @@ class Professional(db.Model):
     professional_reviews = db.relationship('CustomerReview', backref='professional', lazy='dynamic', cascade='all, delete-orphan')
     service_requests = db.relationship('ServiceRequest', backref='professional', lazy='dynamic', cascade='all, delete-orphan')
 
-
 class Service(db.Model):
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -74,7 +70,6 @@ class Service(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: dt.datetime.now(dt.timezone.utc))
     is_approved = db.Column(db.Boolean, default=True)
     service_requests = db.relationship('ServiceRequest', backref='service', lazy='dynamic', cascade='all, delete-orphan')
-
 
 class ServiceRequest(db.Model):
     __tablename__ = 'service_request'
@@ -88,7 +83,6 @@ class ServiceRequest(db.Model):
     remarks = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: dt.datetime.now(dt.timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: dt.datetime.now(dt.timezone.utc), onupdate=lambda: dt.datetime.now(dt.timezone.utc))
-
 
 class CustomerReview(db.Model):
     __tablename__ = 'customer_review'
