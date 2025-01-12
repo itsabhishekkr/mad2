@@ -1,9 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from backend.db import db  # Import db from backend.db
 from flask_security import UserMixin, RoleMixin
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash 
 import datetime as dt
-
-db = SQLAlchemy()
 
 # Association table for many-to-many relationship between Users and Roles
 roles_users = db.Table(
@@ -25,6 +23,8 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
+    fs_uniquifier = db.Column(db.String, unique=True, nullable=False)
+    active = db.Column(db.Boolean, default=True)  # Add the active attribute
     roles = db.relationship('Role', secondary=roles_users, back_populates='users')
     customers = db.relationship('Customer', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     professionals = db.relationship('Professional', backref='user', lazy='dynamic', cascade='all, delete-orphan')
@@ -34,6 +34,7 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
 
 class Customer(db.Model):
