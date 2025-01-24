@@ -52,7 +52,7 @@ class Professional(db.Model):
     fullname = db.Column(db.String(100), nullable=False)
     available_services = db.Column(db.String(100), nullable=True)
     experience = db.Column(db.Integer, nullable=False)
-    documents = db.Column(db.String(255), nullable=False)
+    documents = db.Column(db.String(255), nullable=True)
     address = db.Column(db.String(255), nullable=False)
     pincode = db.Column(db.String(6), nullable=False, index=True)
     is_approved = db.Column(db.Boolean, default=False)
