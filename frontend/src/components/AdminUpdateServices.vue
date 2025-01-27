@@ -84,7 +84,7 @@ export default {
       const token = localStorage.getItem("access_token"); // Retrieve token from local storage
       console.log('Token:', token);
       const response = await axios.get(
-        `http://127.0.0.1:5001/api/admin/service/${serviceId}`,
+        `http://127.0.0.1:5001/api/admin/service/one/${serviceId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ export default {
     async updateService() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.put(
+        await axios.put(
           `http://127.0.0.1:5001/api/admin/service/update/${this.service.id}`, // Use the actual service ID
           this.service,
           {
@@ -112,8 +112,6 @@ export default {
             }
           }
         );
-        console.log(token);
-        console.log('Service updated:', response.data);
         this.$router.push('/admin/services');
       } catch (error) {
         console.error('Error updating service:', error);
@@ -188,3 +186,4 @@ textarea {
   font-size: 14px;
 }
 </style>
+

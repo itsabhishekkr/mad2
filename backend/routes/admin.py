@@ -431,12 +431,6 @@ class AdminProfessionalSearchAPI(Resource):
             return {"error": "An unexpected error occurred: {}".format(str(e))}, 500
         
 
-from backend.models import db, User, Professional, CustomerReview, Service
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask_restful import Resource, request
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
-
 class AdminProfessionalSearchAPI(Resource):
     @jwt_required()
     def get(self):
@@ -672,3 +666,27 @@ class AdminCustomerSearchAPI(Resource):
 
         except Exception as e:
             return {"error": "An unexpected error occurred: {}".format(str(e))}, 500
+
+class AdminServiceOneAPI(Resource):
+    @jwt_required()
+    def get(self, service_id):
+        try:
+            service = Service.query.get(service_id)
+            if not service:
+                return {"error": "Service not found"}, 404
+
+            service_data = {
+                "id": service.id,
+                "name": service.name,
+                "description": service.description,
+                "price": service.price,
+                "time_required": service.time_required
+            }
+            return {"service": service_data}, 200
+
+        except SQLAlchemyError as e:
+            return {"error": "Database error: {}".format(str(e))}, 500
+
+        except Exception as e:
+            return {"error": "An unexpected error occurred: {}".format(str(e))}, 500
+        
