@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from backend.models import *
 from backend.db import db
 from backend.resources import api
+from flask_cors import CORS
 
 # Configuration
 class Config:
@@ -67,13 +68,8 @@ def create_app():
     # Initialize JWT
     jwt = JWTManager(app)
 
-    # Add CORS headers
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-        return response
+    # Enable CORS
+    CORS(app, resources={r"/*": {"origins": "http://localhost:8080","methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],"allow_headers": ["Authorization", "Content-Type"]}})  # Allow only http://localhost:8080
 
     with app.app_context():
         # Create all database tables

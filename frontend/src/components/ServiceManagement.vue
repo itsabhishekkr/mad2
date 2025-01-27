@@ -16,15 +16,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="service in services" :key="service.id">
-            <td>{{service.id}}</td> 
+          <tr v-for="(service,index) in services" :key="service.id">
+            <td>{{index+1}}</td> 
             <td>{{ service.name }}</td>
             <td>{{ service.description }}</td>
             <td>{{ service.price }}</td>
             <td>{{ service.time_required }} hours</td>
             <td>
               <!-- Corrected router-link usage -->
-              <router-link :to="{ name: 'AdminUpdateService', params: { id: service.id } }" class="btn btn-secondary">
+              <router-link :to="{ name: 'AdminUpdateService', params: { id : service.id } }" class="btn btn-secondary">
                 Update
               </router-link>
               <button @click="deleteService(service.id)" class="btn btn-danger">Delete</button>

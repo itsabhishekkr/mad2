@@ -1,130 +1,129 @@
 <template>
-    <div class="admin-update-services">
-      <h1>Update Service</h1>
-  
-      <div v-if="loading" class="loading-message">Loading service details...</div>
-      <div v-else>
-        <form @submit.prevent="updateService" class="update-form">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              v-model="service.name"
-              class="form-control"
-              required
-              placeholder="Enter service name"
-            />
-          </div>
-  
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea
-              id="description"
-              v-model="service.description"
-              class="form-control"
-              rows="4"
-              required
-              placeholder="Enter service description"
-            ></textarea>
-          </div>
-  
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input
-              type="number"
-              id="price"
-              v-model="service.price"
-              class="form-control"
-              required
-              placeholder="Enter service price"
-            />
-          </div>
-  
-          <div class="form-group">
-            <label for="time_required">Time Required (hours)</label>
-            <input
-              type="number"
-              id="time_required"
-              v-model="service.time_required"
-              class="form-control"
-              required
-              placeholder="Enter time required in hours"
-            />
-          </div>
-  
-          <button type="submit" class="btn btn-primary">Update Service</button>
-        </form>
-      </div>
-  
-      <div v-if="error" class="error-message">{{ error }}</div>
+  <div class="admin-update-services">
+    <h1>Update Service</h1>
+    <div v-if="loading" class="loading-message">Loading service details...</div>
+    <div v-else>
+      <form @submit.prevent="updateService" class="update-form">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            v-model="service.name"
+            class="form-control"
+            required
+            placeholder="Enter service name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            v-model="service.description"
+            class="form-control"
+            rows="4"
+            required
+            placeholder="Enter service description"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input
+            type="number"
+            id="price"
+            v-model="service.price"
+            class="form-control"
+            required
+            placeholder="Enter service price"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="time_required">Time Required (hours)</label>
+          <input
+            type="number"
+            id="time_required"
+            v-model="service.time_required"
+            class="form-control"
+            required
+            placeholder="Enter time required in hours"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Service</button>
+      </form>
     </div>
-  </template>
-  
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    name: 'AdminUpdateServices',
-    data() {
-      return {
-        service: {
-          id: '',
-          name: '',
-          description: '',
-          price: '',
-          time_required: ''
-        },
-        error: '',
-        loading: true
-      };
-    },
-    async created() {
-      const serviceId = this.$route.params.id; // Get the service ID from the route
+
+    <div v-if="error" class="error-message">{{ error }}</div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'AdminUpdateServices',
+  data() {
+    return {
+      service: {
+        id: '',
+        name: '',
+        description: '',
+        price: '',
+        time_required: ''
+      },
+      error: '',
+      loading: true
+    };
+  },
+  async created() {
+    const serviceId = this.$route.params.id; // Get the service ID from the route
+    try {
+      const token = localStorage.getItem("access_token"); // Retrieve token from local storage
+      console.log('Token:', token);
+      const response = await axios.get(
+        `http://127.0.0.1:5001/api/admin/service/${serviceId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      this.service = response.data.service;
+    } catch (error) {
+      console.error('Error fetching service:', error);
+      this.error = 'Failed to fetch service. Please try again later.';
+    } finally {
+      this.loading = false;
+    }
+  },
+  methods: {
+    async updateService() {
       try {
-        const token = localStorage.getItem("access_token"); // Retrieve token from local storage
-        const response = await axios.get(
-          `http://127.0.0.1:5001/api/admin/service/${serviceId}`,
+        const token = localStorage.getItem('access_token');
+        const response = await axios.put(
+          `http://127.0.0.1:5001/api/admin/service/update/${this.service.id}`, // Use the actual service ID
+          this.service,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
-            },
+              Authorization: `Bearer ${token}`
+            }
           }
         );
-        this.service = response.data.service;
+        console.log(token);
+        console.log('Service updated:', response.data);
+        this.$router.push('/admin/services');
       } catch (error) {
-        console.error('Error fetching service:', error);
-        this.error = 'Failed to fetch service. Please try again later.';
-      } finally {
-        this.loading = false;
-      }
-    },
-    methods: {
-      async updateService() {
-        try {
-          const token = localStorage.getItem('access_token');
-          const response = await axios.put(
-            `http://127.0.0.1:5001/api/admin/service/update/${this.service.id}`, // Use the actual service ID
-            this.service,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          );
-          console.log('Service updated:', response.data);
-          this.$router.push('/admin/services');
-        } catch (error) {
-          console.error('Error updating service:', error);
-          this.error = 'Failed to update service. Please try again later.';
-        }
+        console.error('Error updating service:', error);
+        this.error = 'Failed to update service. Please try again later.';
       }
     }
-  };
-  </script>
+  }
+};
+</script>
 
-  
 <style scoped>
 .admin-update-services {
   text-align: center;
