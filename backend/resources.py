@@ -3,8 +3,10 @@ from backend.models import User
 from flask_jwt_extended import create_access_token, JWTManager, get_jwt_identity, jwt_required
 from backend.db import db
 from backend.routes.allroutes import LoginAPI, RegisterCustomerAPI, RegisterProfessionalAPI
-from backend.admin import AllAdminServiceAPI,AdminAddServiceAPI, AdminUpdateServiceAPI, AdminDeleteServiceAPI
-from backend.admin import AdminServiceSummaryAPI, AdminServiceSearchAPI, AdminProfessionalDetailsAPI, AdminBlockUnblockProfessionalAPI
+from backend.routes.admin import AllAdminServiceAPI,AdminAddServiceAPI, AdminUpdateServiceAPI, AdminDeleteServiceAPI
+from backend.routes.admin import AdminServiceSummaryAPI, AdminServiceSearchAPI, AdminProfessionalDetailsAPI, AdminBlockUnblockProfessionalAPI
+from backend.routes.admin import AdminProfessionalSummaryAPI, AdminProfessionalSearchAPI, AdminCustomerDetailsAPI,AdminCustomerSummaryAPI
+from backend.routes.admin import AdminBlockUnblockCustomerAPI,AdminCustomerSearchAPI
 
 api = Api(prefix='/api')
 
@@ -19,3 +21,9 @@ api.add_resource(AdminServiceSummaryAPI, '/admin/service/summary')
 api.add_resource(AdminServiceSearchAPI, '/admin/service/search/<string:search_term>')
 api.add_resource(AdminProfessionalDetailsAPI, '/admin/professional/details')
 api.add_resource(AdminBlockUnblockProfessionalAPI, '/admin/professional/block_unblock/<int:professional_id>') 
+api.add_resource(AdminProfessionalSummaryAPI, '/admin/summary/professionals') 
+api.add_resource(AdminProfessionalSearchAPI, '/admin/professional/search')
+api.add_resource(AdminCustomerDetailsAPI, '/admin/customer/details')
+api.add_resource(AdminCustomerSummaryAPI, '/admin/summary/customers')
+api.add_resource(AdminBlockUnblockCustomerAPI, '/admin/customer/block_unblock/<int:customer_id>') 
+api.add_resource(AdminCustomerSearchAPI, '/admin/customer/search')
