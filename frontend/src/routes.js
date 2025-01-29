@@ -6,6 +6,10 @@ import ServiceManagement from './components/ServiceManagement.vue';
 import AdminUpdateServices from './components/AdminUpdateServices.vue';
 import AdminCustomer from './components/AdminCustomer.vue';
 import AdminProfessionalDetails from './components/AdminProfessionalDetails.vue';
+import CustomerRegister from './components/CustomerRegister.vue';
+import ProfessionalRegister from './components/ProfessionalRegister.vue';
+import CustomerServiceList from './components/CustomerServiceList.vue';
+
 
 const routes = [
   { path: '/', component: HomePage },
@@ -19,7 +23,10 @@ const routes = [
     props: true, // Pass `id` as a prop to the component
   },
   {path: '/admin/customers', component: AdminCustomer},
-  {path: '/admin/professionals', component: AdminProfessionalDetails}
+  {path: '/admin/professionals', component: AdminProfessionalDetails},
+  {path: '/registor/customer', component: CustomerRegister},
+  {path: '/registor/professional', component: ProfessionalRegister},
+  {path: '/customer/dashboard', component: CustomerServiceList}
 ];
 
 const router = createRouter({

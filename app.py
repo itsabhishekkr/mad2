@@ -5,6 +5,7 @@ from backend.models import *
 from backend.db import db
 from backend.resources import api
 from flask_cors import CORS
+import os
 
 # Configuration
 class Config:
@@ -55,6 +56,12 @@ def seed_data(app):
 def create_app():
     app = Flask(__name__, template_folder='frontend', static_folder='frontend', static_url_path='/static')
     app.config.from_object(LocalDevelopmentConfig)
+
+
+    # Ensure the upload folder exists
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+
 
     # Initialize the database
     db.init_app(app)

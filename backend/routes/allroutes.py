@@ -5,6 +5,7 @@ from backend.models import db, User, Customer, Professional, Role, Service
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash
 import os
+from werkzeug.utils import secure_filename
 
 class LoginAPI(Resource):
     def post(self):
@@ -153,29 +154,46 @@ class RegisterCustomerAPI(Resource):
 
     def get(self):
         return {"message": "This endpoint supports POST requests to register a customer."}, 200
+    
+
+
+
+
+####------------------------------------Register Professional API------------------------------------####
+
+
+
 class RegisterProfessionalAPI(Resource):
     @jwt_required()
     def post(self):
         current_user = get_jwt_identity()
         try:
-            # Parse request JSON data
-            data = request.get_json()
-            email = data.get('email')
-            password = data.get('password')
-            fullname = data.get('fullname')
-            available_services = data.get('available_services', [])
-            experience = data.get('experience')
-            address = data.get('address')
-            pincode = data.get('pincode')
+            # Retrieve form fields and file
+            email = request.form.get('email')
+            password = request.form.get('password')
+            fullname = request.form.get('fullname')
+            available_services = request.form.getlist('available_services')
+            experience = request.form.get('experience')
+            address = request.form.get('address')
+            pincode = request.form.get('pincode')
+            documents = request.files.get('documents')
 
             # Validate required fields
             if not email or not password or not fullname or not experience:
-                return {"error": "Missing required fields."}, 400
+                return jsonify({"error": "Missing required fields."}), 400
 
             # Check for existing user
             existing_user = User.query.filter_by(email=email).first()
             if existing_user:
-                return {"error": "Email already exists."}, 409
+                return jsonify({"error": "Email already exists."}), 409
+
+            # Handle file upload (if file is uploaded)
+            if documents:
+                filename = secure_filename(documents.filename)
+                upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                documents.save(upload_path)
+            else:
+                upload_path = None  # You can set a default value if necessary
 
             # Create new user
             user = User(email=email, active=True)
@@ -196,19 +214,23 @@ class RegisterProfessionalAPI(Resource):
                 experience=int(experience),
                 address=address,
                 pincode=pincode,
-                user_id=user.id
+                user_id=user.id,
+                documents_path=upload_path  # Store the file path or other info as needed
             )
             db.session.add(professional)
             db.session.commit()
 
-            return {"message": "Registration successful. Awaiting admin approval."}, 201
+            # Return a proper JSON response with a 201 status code
+            return jsonify({"message": "Registration successful. Awaiting admin approval."}), 201
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            return {"error": "Database error: {}".format(str(e))}, 500
+            return jsonify({"error": "Database error: {}".format(str(e))}), 500
 
         except Exception as e:
-            return {"error": "An unexpected error occurred: {}".format(str(e))}, 500
+            # Return the error as JSON
+            return jsonify({"error": "An unexpected error occurred: {}".format(str(e))}), 500
 
     def get(self):
-        return {"message": "This endpoint supports POST requests to register a professional."}, 200
+        return jsonify({"message": "This endpoint supports POST requests to register a professional."}), 200
+    

@@ -3,6 +3,8 @@
       <h1>Welcome to Household Services</h1>
       <p>Your one-stop solution for all household services.</p>
       <router-link to="/login" class="btn btn-primary">Login</router-link>
+      <router-link to="/registor/customer" class="btn btn-primary">Registor customer</router-link>
+      <router-link to="/registor/professional" class="btn btn-primary">Registor professinal</router-link>
       <!-- <router-link to="/signup" class="btn btn-secondary">Sign Up</router-link> -->
     </div>
   </template>
