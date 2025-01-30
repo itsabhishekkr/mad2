@@ -7,7 +7,8 @@ from backend.routes.admin import AllAdminServiceAPI,AdminAddServiceAPI, AdminUpd
 from backend.routes.admin import AdminServiceSummaryAPI, AdminServiceSearchAPI, AdminProfessionalDetailsAPI, AdminBlockUnblockProfessionalAPI
 from backend.routes.admin import AdminProfessionalSummaryAPI, AdminProfessionalSearchAPI, AdminCustomerDetailsAPI,AdminCustomerSummaryAPI
 from backend.routes.admin import AdminBlockUnblockCustomerAPI,AdminCustomerSearchAPI,AdminServiceOneAPI
-from backend.routes.customer import AdminBlockCustomer, AdminUnblockCustomer
+from backend.routes.customer import AdminBlockCustomer, AdminUnblockCustomer, CustomerBookServiceAPI,CustomerBookHistoryAPI
+
 
 api = Api(prefix='/api')
 
@@ -31,3 +32,6 @@ api.add_resource(AdminBlockUnblockCustomerAPI, '/admin/customer/block_unblock/<i
 api.add_resource(AdminCustomerSearchAPI, '/admin/customer/search')
 api.add_resource(AdminBlockCustomer, '/admin/customer/block/<int:customer_id>')
 api.add_resource(AdminUnblockCustomer, '/admin/customer/unblock/<int:customer_id>')
+api.add_resource(CustomerBookServiceAPI, '/customer/book/service/<int:service_id>')
+api.add_resource(CustomerBookHistoryAPI, '/customer/book/history')
+

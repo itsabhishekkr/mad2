@@ -9,6 +9,7 @@ import AdminProfessionalDetails from './components/AdminProfessionalDetails.vue'
 import CustomerRegister from './components/CustomerRegister.vue';
 import ProfessionalRegister from './components/ProfessionalRegister.vue';
 import CustomerServiceList from './components/CustomerServiceList.vue';
+import CustomerBookHistory from './components/CustomerBookHistory.vue';
 
 
 const routes = [
@@ -26,7 +27,8 @@ const routes = [
   {path: '/admin/professionals', component: AdminProfessionalDetails},
   {path: '/registor/customer', component: CustomerRegister},
   {path: '/registor/professional', component: ProfessionalRegister},
-  {path: '/customer/dashboard', component: CustomerServiceList}
+  {path: '/customer/dashboard', component: CustomerServiceList},
+  {path: '/customer/booking/history', component: CustomerBookHistory}
 ];
 
 const router = createRouter({

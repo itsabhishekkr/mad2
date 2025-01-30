@@ -124,8 +124,8 @@ class AllAdminServiceAPI(Resource):
         
         # Check if the user is an admin
         user = User.query.get(current_user)
-        if not user or 'admin' not in [role.name for role in user.roles]:
-            return {"error": "Unauthorized access."}, 403
+        # if not user or 'admin' or 'customer' not in [role.name for role in user.roles]:
+        #     return {"error": "Unauthorized access."}, 403
 
         try:
             # Retrieve all services
